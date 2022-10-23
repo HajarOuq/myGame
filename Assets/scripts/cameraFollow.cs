@@ -10,6 +10,7 @@ public class cameraFollow : MonoBehaviour
     private void Awake()
     {
         range = transform.position - chartransform.position;
+        //
     }
 
     // Start is called before the first frame update
