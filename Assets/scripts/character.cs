@@ -9,18 +9,27 @@ public class character : MonoBehaviour
     public float jumpforce;
     bool grounded;
     bool canjump;
- 
-    public GameObject groundDetector;
+    bool isFacingRight = true;
+    public List<Animator> characters = new List<Animator>();
+    public GameObject groundDetector, pink, orange;
+    bool canChange1, canChange2;
+    public GameObject green,cam,healthbar;
+    RuntimeAnimatorController animator;
+    public Sprite[] health;
+    int hp;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb2d = GetComponent<Rigidbody2D>();      
+        rb2d = GetComponent<Rigidbody2D>();
+        canChange1 = false;
+        canChange2 = false;
+        hp = 6;
     }
 
     bool canDoVelocity = true;
-    float timeInAir = 0.2f;
-    float time = 0;
+    float timeInAir = 0.2f, timehp = 1f;
+    float time = 0, time2 = 0;
     float h;
     float timeRight=0;
     bool stoppedRight = false;
@@ -28,7 +37,28 @@ public class character : MonoBehaviour
     
     private void Update()
     {
-        Velocity();       
+        animator = GetComponent<Animator>().runtimeAnimatorController;
+        Velocity();
+        Idle();
+        ChangeCharacter();
+        CheckHelth();
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.name == "ballpink")
+        {            
+            col.GetComponent<Animator>().SetBool("ballanim", true);
+            canChange1 = true;           
+        }
+        if (col.name == "ballorange")
+        {
+            col.GetComponent<Animator>().SetBool("ballanim", true);
+            canChange2 = true;
+        }
+
+        if (col.name.Contains("heal") && hp < 6)
+            hp++;
     }
 
     public LayerMask layer;
@@ -40,20 +70,81 @@ public class character : MonoBehaviour
         // If it hits something...     
         if (hit.collider != null)
         {
+
             Debug.DrawRay(groundDetector.transform.position, hit.point, Color.green);
             if (hit.collider.CompareTag("ground") || hit.collider.CompareTag("platform"))
             {
                 grounded = true;
                 canDoVelocity = true;
                 canjump = true;
+                GetComponent<Animator>().SetBool("jump", false);
             }
-           
+
+            if (hit.collider.CompareTag("lava"))
+            {
+                rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+            }
+
+            if(hit.collider.name.Contains("greenfloor"))
+            {
+                if (animator.name == "pink" || animator.name == "orange")
+                {
+                    time2 += Time.deltaTime;
+                    if (hp > 0 && time2 > timehp)
+                    {
+                        hp--;
+
+                        StartCoroutine(hurt());
+                        time2 = 0;
+                    }
+
+                    healthbar.GetComponent<SpriteRenderer>().sprite = health[hp];
+                }
+                else
+                    time2 = 0;
+            }
+
+            if (hit.collider.name.Contains("pinkfloor"))
+            {
+                if (animator.name == "green" || animator.name == "orange")
+                {
+                    time2 += Time.deltaTime;
+                    if (hp > 0 && time2 > timehp)
+                    {
+                        hp--;
+                        StartCoroutine(hurt());
+                        time2 = 0;
+                    }
+                    healthbar.GetComponent<SpriteRenderer>().sprite = health[hp];
+                }
+                else
+                    time2 = 0;
+            }
+
+            if (hit.collider.name.Contains("orangefloor"))
+            {
+                if (animator.name == "pink" || animator.name == "green")
+                {
+                    time2 += Time.deltaTime;
+                    if (hp > 0 && time2 > timehp)
+                    {
+                        hp--;
+                        StartCoroutine(hurt());
+                        time2 = 0;
+                    }
+                    healthbar.GetComponent<SpriteRenderer>().sprite = health[hp];
+                }
+                else
+                    time2 = 0;
+            }
+
         }
         else 
         {
             grounded = false;
             canDoVelocity = false;
             canjump = false;
+            GetComponent<Animator>().SetBool("jump", true);
         }
     }
 
@@ -63,6 +154,20 @@ public class character : MonoBehaviour
         if (h != 0)
             h2 = h;
         h = Input.GetAxisRaw("Horizontal");
+        if(h>0 && !isFacingRight)
+        {
+            Vector3 scale= transform.localScale;
+            scale.x *= -1;
+            transform.localScale = scale;
+            isFacingRight = true;
+        }
+        if (h < 0 && isFacingRight)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x *= -1;
+            transform.localScale = scale;
+            isFacingRight = false;
+        }
         if (h2 == -h && h2 * h != 0)
         {
             time = 0;
@@ -93,7 +198,7 @@ public class character : MonoBehaviour
             time += Time.deltaTime;
             if (time < timeInAir)
             {
-                rb2d.AddForce(new Vector2(h, 0) * 2);
+                rb2d.AddForce(new Vector2(h, 0) * (1.5f));
             }
         }
 
@@ -111,6 +216,56 @@ public class character : MonoBehaviour
         else
         {
             stoppedRight = true;
+        }
+
+    }
+
+    void ChangeCharacter()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            GetComponent<Animator>().runtimeAnimatorController = characters[0].runtimeAnimatorController;
+        if (Input.GetKeyDown(KeyCode.Alpha2) && canChange1)
+            GetComponent<Animator>().runtimeAnimatorController = characters[1].runtimeAnimatorController;
+        if (Input.GetKeyDown(KeyCode.Alpha3) && canChange2)
+            GetComponent<Animator>().runtimeAnimatorController = characters[2].runtimeAnimatorController;
+    }
+
+    void Idle()
+    {
+        if (rb2d.velocity == Vector2.zero)
+        {
+            GetComponent<Animator>().SetBool("isIdle", true);
+        }
+        else
+        {
+            GetComponent<Animator>().SetBool("isIdle", false);
+        }
+    }
+
+    void CheckHelth()
+    {
+        if (hp == 0)
+            rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+    }
+
+
+
+    IEnumerator hurt()
+    {
+        
+        float s = 0;
+        while (s < 50)
+        {
+
+            s += 2;
+            GetComponent<SpriteRenderer>().color = Color.HSVToRGB(0, s / 100f,1 );
+        }
+        yield return new WaitForSeconds(1);
+        while (s> 0)
+        {
+
+            s -= 2;
+            GetComponent<SpriteRenderer>().color = Color.HSVToRGB(0, s / 100f, 1);
         }
 
     }
