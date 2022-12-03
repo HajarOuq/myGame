@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        sky.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(h / 360, s / 100, v / 100);
+        //sky.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(h / 360, s / 100, v / 100);
 
     }
 }

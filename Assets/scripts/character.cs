@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class character : MonoBehaviour
 {
@@ -11,12 +12,21 @@ public class character : MonoBehaviour
     bool canjump;
     bool isFacingRight = true;
     public List<Animator> characters = new List<Animator>();
-    public GameObject groundDetector, pink, orange;
+    public GameObject groundDetector, pink, orange, greenfloor;
+    public GameObject playbutton, replaybutton;
     bool canChange1, canChange2;
-    public GameObject green,cam,healthbar;
+    public GameObject green, cam, healthbar, lava;
     RuntimeAnimatorController animator;
     public Sprite[] health;
-    int hp;
+    [HideInInspector]
+    public int hp;
+    public static character instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +35,9 @@ public class character : MonoBehaviour
         canChange1 = false;
         canChange2 = false;
         hp = 6;
+        greenfloor.SetActive(false);
+        replaybutton.SetActive(false);
+        lava.SetActive(false);
     }
 
     bool canDoVelocity = true;
@@ -37,11 +50,14 @@ public class character : MonoBehaviour
     
     private void Update()
     {
+        CheckHelth();
+        healthbar.GetComponent<SpriteRenderer>().sprite = health[hp];
+        if (hp <= 0)
+            return;
         animator = GetComponent<Animator>().runtimeAnimatorController;
         Velocity();
         Idle();
-        ChangeCharacter();
-        CheckHelth();
+        ChangeCharacter();     
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -57,8 +73,18 @@ public class character : MonoBehaviour
             canChange2 = true;
         }
 
-        if (col.name.Contains("heal") && hp < 6)
-            hp++;
+        if (col.name.Contains("heal"))
+        {
+            Destroy(col.gameObject);
+            if (hp < 6)
+                hp++;
+        }
+
+        if (col.name.Contains("lava"))
+        {
+            hp = 0;
+            rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
     }
 
     public LayerMask layer;
@@ -80,11 +106,6 @@ public class character : MonoBehaviour
                 GetComponent<Animator>().SetBool("jump", false);
             }
 
-            if (hit.collider.CompareTag("lava"))
-            {
-                rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
-            }
-
             if(hit.collider.name.Contains("greenfloor"))
             {
                 if (animator.name == "pink" || animator.name == "orange")
@@ -92,13 +113,9 @@ public class character : MonoBehaviour
                     time2 += Time.deltaTime;
                     if (hp > 0 && time2 > timehp)
                     {
-                        hp--;
-
                         StartCoroutine(hurt());
                         time2 = 0;
                     }
-
-                    healthbar.GetComponent<SpriteRenderer>().sprite = health[hp];
                 }
                 else
                     time2 = 0;
@@ -110,12 +127,10 @@ public class character : MonoBehaviour
                 {
                     time2 += Time.deltaTime;
                     if (hp > 0 && time2 > timehp)
-                    {
-                        hp--;
+                    {                    
                         StartCoroutine(hurt());
                         time2 = 0;
                     }
-                    healthbar.GetComponent<SpriteRenderer>().sprite = health[hp];
                 }
                 else
                     time2 = 0;
@@ -127,17 +142,14 @@ public class character : MonoBehaviour
                 {
                     time2 += Time.deltaTime;
                     if (hp > 0 && time2 > timehp)
-                    {
-                        hp--;
+                    {                    
                         StartCoroutine(hurt());
                         time2 = 0;
                     }
-                    healthbar.GetComponent<SpriteRenderer>().sprite = health[hp];
                 }
                 else
                     time2 = 0;
             }
-
         }
         else 
         {
@@ -245,28 +257,42 @@ public class character : MonoBehaviour
     void CheckHelth()
     {
         if (hp == 0)
+        {
             rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+            GetComponent<Animator>().SetBool("isdead", true);
+            replaybutton.SetActive(true);
+        }          
     }
 
 
 
     IEnumerator hurt()
-    {
-        
+    {        
         float s = 0;
         while (s < 50)
         {
-
             s += 2;
-            GetComponent<SpriteRenderer>().color = Color.HSVToRGB(0, s / 100f,1 );
+            GetComponent<SpriteRenderer>().color = Color.HSVToRGB(0, s / 100f, 1);
         }
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.2f);
         while (s> 0)
         {
-
             s -= 2;
             GetComponent<SpriteRenderer>().color = Color.HSVToRGB(0, s / 100f, 1);
         }
+        hp--;
+    }
 
+    public void replay()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void play()
+    {
+        Time.timeScale = 1;
+        playbutton.SetActive(false);
+        greenfloor.SetActive(true);
+        lava.SetActive(true);
     }
 }

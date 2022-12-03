@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlatformGenerator : MonoBehaviour
 {
 
-    public GameObject firstPlatform, platformParent, heal;
+    public GameObject firstPlatform, platformParent, heal, healParent;
     public float maxY = 2f,minXScreen=-2.21f,maxXScreen=2.21f;
     public GameObject[] listFloor;
     public List<GameObject> generatedPlatforms=new List<GameObject>();
@@ -14,15 +14,16 @@ public class PlatformGenerator : MonoBehaviour
     public int NumberOfPlats = 100;
     void Start()
     {
-        generate();
+        //generate();
     }
     
-    void generate()
+    public void generate()
     {
         //Vector2 size = firstPlatform.GetComponent<SpriteRenderer>().size;
         Vector2 position;
         GameObject clone = firstPlatform;
         float positionX;
+        GameObject clone2 = heal;
 
         for (int i = 0; i <= 100; i++)
         {                    
@@ -49,9 +50,11 @@ public class PlatformGenerator : MonoBehaviour
             clone.transform.parent = platformParent.transform;
             generatedPlatforms.Add(clone);
 
-            if (i%6==0)
+            if (i > 10 && i % 10 == 0)
             {
-
+                clone2 = Instantiate(clone2);
+                clone2.transform.position = new Vector3(generatedPlatforms[i].GetComponent<Transform>().position.x, generatedPlatforms[i].GetComponent<Transform>().position.y + heal.GetComponent<Transform>().localScale.y, generatedPlatforms[i].GetComponent<Transform>().position.z);
+                clone2.transform.parent = healParent.transform;
             }
         }
 
