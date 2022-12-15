@@ -9,7 +9,7 @@ public class PlatformGenerator : MonoBehaviour
     public float maxY = 2f,minXScreen=-2.21f,maxXScreen=2.21f;
     public GameObject[] listFloor;
     public List<GameObject> generatedPlatforms=new List<GameObject>();
-    public GameObject pink, orange;
+    public GameObject pink, orange, clouds;
 
     public int NumberOfPlats = 100;
     void Start()
@@ -24,6 +24,7 @@ public class PlatformGenerator : MonoBehaviour
         GameObject clone = firstPlatform;
         float positionX;
         GameObject clone2 = heal;
+        GameObject clone3 = clouds;
 
         for (int i = 0; i <= 100; i++)
         {                    
@@ -49,6 +50,9 @@ public class PlatformGenerator : MonoBehaviour
             clone.transform.position = position;
             clone.transform.parent = platformParent.transform;
             generatedPlatforms.Add(clone);
+
+            clone3 = Instantiate(clone3);
+            clone3.transform.position = new Vector3(clone3.transform.position.x, clone3.transform.position.y + 10, clone3.transform.position.z);
 
             if (i > 10 && i % 10 == 0)
             {

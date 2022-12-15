@@ -13,7 +13,7 @@ public class character : MonoBehaviour
     bool isFacingRight = true;
     public List<Animator> characters = new List<Animator>();
     public GameObject groundDetector, pink, orange, greenfloor;
-    public GameObject playbutton, replaybutton;
+    public GameObject playbutton, replaybutton, udedtext;
     bool canChange1, canChange2;
     public GameObject green, cam, healthbar, lava;
     RuntimeAnimatorController animator;
@@ -38,6 +38,7 @@ public class character : MonoBehaviour
         greenfloor.SetActive(false);
         replaybutton.SetActive(false);
         lava.SetActive(false);
+        udedtext.SetActive(false);
     }
 
     bool canDoVelocity = true;
@@ -57,7 +58,8 @@ public class character : MonoBehaviour
         animator = GetComponent<Animator>().runtimeAnimatorController;
         Velocity();
         Idle();
-        ChangeCharacter();     
+        ChangeCharacter();
+        Debug.Log(Time.timeScale);
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -258,9 +260,12 @@ public class character : MonoBehaviour
     {
         if (hp == 0)
         {
-            rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+            rb2d.constraints = RigidbodyConstraints2D.FreezePositionX;
             GetComponent<Animator>().SetBool("isdead", true);
             replaybutton.SetActive(true);
+            rb2d.mass = 10;
+            GetComponent<PolygonCollider2D>().enabled = false;
+            udedtext.SetActive(true);
         }          
     }
 
@@ -290,9 +295,13 @@ public class character : MonoBehaviour
 
     public void play()
     {
-        Time.timeScale = 1;
         playbutton.SetActive(false);
         greenfloor.SetActive(true);
         lava.SetActive(true);
+    }
+    
+    public void resume()
+    {
+        Time.timeScale = 1;
     }
 }

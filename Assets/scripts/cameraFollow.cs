@@ -14,6 +14,7 @@ public class cameraFollow : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position = new Vector3(transform.position.x,range.y + chartransform.position.y, range.z + chartransform.position.z);
+        if (character.instance.hp > 0)
+            transform.position = new Vector3(transform.position.x,range.y + chartransform.position.y, range.z + chartransform.position.z);
     }
 }

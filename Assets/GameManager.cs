@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public GameObject sky;
     Color32 color;
-    public float h=208, s=67, v=100;
+    float h = 200, s = 60, v = 100;
     void Start()
     {
       
@@ -15,7 +15,31 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //sky.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(h / 360, s / 100, v / 100);
+        if (character.instance.hp > 0 && canChangeColor)
+            StartCoroutine(changeColor());       
+    }
 
+    bool canChangeColor = true;
+    public IEnumerator changeColor()
+    {
+        canChangeColor = false;
+        v = 100;
+        while (v > 10)
+        {
+            v -= 0.01f;
+            sky.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(h / 360, s / 100, v / 100);
+            yield return new WaitForSeconds(0.001f);
+        }
+
+        yield return new WaitForSeconds(5);        
+      
+        while (v < 100)
+        {
+            v += 0.01f;
+            sky.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(h / 360, s / 100, v / 100);
+            yield return new WaitForSeconds(0.001f);
+        }
+        canChangeColor = true;
+        yield return new WaitForSeconds(5);
     }
 }
