@@ -10,7 +10,7 @@ public class Ball : MonoBehaviour
     public GameObject pink, orange;
     public GameObject pinkico, orangeico;
     public GameObject green, cam;
-    [SerializeField] GameObject pauseMenu;
+    public GameObject pauseMenu;
 
     //1 pink 
     //2 orange
@@ -35,14 +35,12 @@ public class Ball : MonoBehaviour
         {
             chara = pink;
             pinkico.SetActive(true);
-            pinkico.GetComponent<Transform>().position = new Vector3(0, -30, 0);
             chara.GetComponent<Transform>().position = new Vector3(green.transform.position.x, green.transform.position.y - 0.65f, green.transform.position.z);
         }
         else
         {
             chara = orange;
             orangeico.SetActive(true);
-            orangeico.GetComponent<Transform>().position = new Vector3(0, -30f, 0);
             chara.GetComponent<Transform>().position = new Vector3(green.transform.position.x, green.transform.position.y - 1.3f, green.transform.position.z);
         }
 
@@ -53,12 +51,5 @@ public class Ball : MonoBehaviour
     public void pause()
     {
         Time.timeScale = 0;
-    }
-
-    public void removecanvas()
-    {
-        pauseMenu.SetActive(false);
-        pinkico.SetActive(false);
-        orangeico.SetActive(false);
     }
 }

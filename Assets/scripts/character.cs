@@ -59,7 +59,6 @@ public class character : MonoBehaviour
         Velocity();
         Idle();
         ChangeCharacter();
-        Debug.Log(Time.timeScale);
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -202,6 +201,7 @@ public class character : MonoBehaviour
                 {
                     canjump = false;
                     canDoVelocity = false;
+                    AudioManager.instance.playJumpSound();
                     rb2d.AddForce(Vector2.up * jumpforce);
                 }
             }
@@ -303,5 +303,8 @@ public class character : MonoBehaviour
     public void resume()
     {
         Time.timeScale = 1;
+        Ball.instance.pauseMenu.SetActive(false);
+        Ball.instance.pinkico.SetActive(false);
+        Ball.instance.orangeico.SetActive(false);
     }
 }

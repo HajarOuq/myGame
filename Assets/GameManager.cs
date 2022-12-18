@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
         {
             v -= 0.01f;
             sky.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(h / 360, s / 100, v / 100);
-            yield return new WaitForSeconds(0.001f);
+            yield return new WaitForSeconds(0.0001f);
         }
 
         yield return new WaitForSeconds(5);        
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         {
             v += 0.01f;
             sky.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(h / 360, s / 100, v / 100);
-            yield return new WaitForSeconds(0.001f);
+            yield return new WaitForSeconds(0.0001f);
         }
         canChangeColor = true;
         yield return new WaitForSeconds(5);
