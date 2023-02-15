@@ -9,19 +9,17 @@ public class character : MonoBehaviour
     Rigidbody2D rb2d;
     public float speed;
     public float jumpforce;
-    bool grounded;
-    bool canjump;
+    bool grounded, canjump, canChange1, canChange2;
     bool isFacingRight = true;
     public List<Animator> characters = new List<Animator>();
     public GameObject groundDetector, pink, orange, greenfloor;
     public GameObject playbutton, replaybutton, udedtext;
-    bool canChange1, canChange2;
     public GameObject green, cam, healthbar, lava;
     RuntimeAnimatorController animator;
     public Sprite[] health;
     public TextMeshProUGUI scoretext;
     [HideInInspector]
-    public int hp, score;
+    public int hp, score, bestScore = 0, currentBestScore;
     public static character instance;
 
     private void Awake()
@@ -276,10 +274,9 @@ public class character : MonoBehaviour
             rb2d.mass = 10;
             GetComponent<PolygonCollider2D>().enabled = false;
             udedtext.SetActive(true);
+            score = currentBestScore;
         }          
     }
-
-
 
     IEnumerator hurt()
     {        
@@ -301,6 +298,7 @@ public class character : MonoBehaviour
     public void replay()
     {
         SceneManager.LoadScene(0);
+        Time.timeScale = 1;
     }
 
     public void play()
@@ -313,8 +311,16 @@ public class character : MonoBehaviour
     public void resume()
     {
         Time.timeScale = 1;
-        Ball.instance.pauseMenu.SetActive(false);
+        Ball.instance.newcharMenu.SetActive(false);
         Ball.instance.pinkico.SetActive(false);
         Ball.instance.orangeico.SetActive(false);
+    }
+
+    public void checkScore()
+    {
+        if(currentBestScore > bestScore)
+        {
+            bestScore = currentBestScore;
+        }
     }
 }

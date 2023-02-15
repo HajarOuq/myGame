@@ -10,7 +10,7 @@ public class Ball : MonoBehaviour
     public GameObject pink, orange;
     public GameObject pinkico, orangeico;
     public GameObject green, cam;
-    public GameObject pauseMenu;
+    public GameObject newcharMenu;
 
     //1 pink 
     //2 orange
@@ -23,13 +23,13 @@ public class Ball : MonoBehaviour
     {
         pinkico.SetActive(false);
         orangeico.SetActive(false);
-        pauseMenu.SetActive(false);
+        newcharMenu.SetActive(false);
     }
 
     public void job()
     {
         GameObject chara;
-        pauseMenu.SetActive(true);
+        newcharMenu.SetActive(true);
 
         if (color == 1)
         {

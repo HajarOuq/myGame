@@ -5,11 +5,12 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public GameObject sky;
+    public GameObject pauseMenu;
     Color32 color;
     float h = 200, s = 60, v = 100;
     void Start()
     {
-      
+        pauseMenu.SetActive(false);
     }
 
     // Update is called once per frame
@@ -42,4 +43,17 @@ public class GameManager : MonoBehaviour
         canChangeColor = true;
         yield return new WaitForSeconds(5);
     }
+
+    public void pause()
+    {
+        Time.timeScale = 0;
+        pauseMenu.SetActive(true);
+    }
+
+    public void resume()
+    {
+        Time.timeScale = 1;
+        pauseMenu.SetActive(false);
+    }
+
 }
