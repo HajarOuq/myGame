@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class character : MonoBehaviour
 {
@@ -18,8 +19,9 @@ public class character : MonoBehaviour
     public GameObject green, cam, healthbar, lava;
     RuntimeAnimatorController animator;
     public Sprite[] health;
+    public TextMeshProUGUI scoretext;
     [HideInInspector]
-    public int hp;
+    public int hp, score;
     public static character instance;
 
     private void Awake()
@@ -35,6 +37,7 @@ public class character : MonoBehaviour
         canChange1 = false;
         canChange2 = false;
         hp = 6;
+        score = 0;
         greenfloor.SetActive(false);
         replaybutton.SetActive(false);
         lava.SetActive(false);
@@ -85,6 +88,13 @@ public class character : MonoBehaviour
         {
             hp = 0;
             rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
+
+        if(col.name.Contains("scorebarrier"))
+        {
+            score++;
+            scoretext.text = score.ToString();
+            Destroy(col.GetComponent<BoxCollider2D>());
         }
     }
 

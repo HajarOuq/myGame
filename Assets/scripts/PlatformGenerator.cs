@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlatformGenerator : MonoBehaviour
 {
 
-    public GameObject firstPlatform, platformParent, heal, healParent;
+    public GameObject firstPlatform, platformParent, heal, healParent, cloudparent;
     public float maxY = 2f,minXScreen=-2.21f,maxXScreen=2.21f;
     public GameObject[] listFloor;
     public List<GameObject> generatedPlatforms=new List<GameObject>();
@@ -53,6 +53,7 @@ public class PlatformGenerator : MonoBehaviour
 
             clone3 = Instantiate(clone3);
             clone3.transform.position = new Vector3(clone3.transform.position.x, clone3.transform.position.y + 10, clone3.transform.position.z);
+            clone3.transform.parent = cloudparent.transform;
 
             if (i > 10 && i % 10 == 0)
             {
